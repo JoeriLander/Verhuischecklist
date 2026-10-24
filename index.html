@@ -98,16 +98,16 @@ body.hidedone .items label:has(input:checked){display:none}
 <body>
 <main>
 <div class="top"><h1>Verhuischecklist</h1><div class="side"><div id="total"></div><label class="hide"><input type="checkbox" id="hide"><span>Verberg afgevinkt</span></label></div></div>
-<div class="sync"><button type="button" id="share">Vinkjes delen</button><button type="button" class="ghost" id="export">Wat we nog zoeken</button></div>
+<div class="sync"><button type="button" id="share">Vinkjes delen</button><button type="button" class="ghost" id="export">Lijstje versturen</button></div>
 <p class="msg" id="msg">Je vinkjes worden automatisch op dit apparaat bewaard.</p>
 <div class="cols" id="list"></div>
 </main>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"><div class="card">
-<h2 id="sheet-t">Wat we nog zoeken</h2>
+<h2 id="sheet-t">Lijstje versturen</h2>
 <label class="opt"><input type="checkbox" id="onlyStuff" checked><span>Alleen spullen (zonder boodschappen en taken)</span></label>
 <textarea id="exportText" aria-label="Tekst om te versturen"></textarea>
 <div class="done" id="exportDone"></div>
-<div class="row"><button type="button" id="exportShare">Delen</button><button type="button" id="exportCopy">Kopiëren</button><button type="button" class="ghost" id="exportClose">Sluiten</button></div>
+<div class="row"><button type="button" id="exportWa">Via WhatsApp</button><button type="button" id="exportShare">Delen</button><button type="button" id="exportCopy">Kopiëren</button><button type="button" class="ghost" id="exportClose">Sluiten</button></div>
 </div></div>
 <script type="text/plain" id="data">@woon
 #Zitten en tafelen
@@ -728,6 +728,7 @@ document.getElementById('exportCopy').addEventListener('click',async()=>{
   try{ await navigator.clipboard.writeText(ta.value); done.textContent='Gekopieerd. Plak de tekst in WhatsApp, een mail of een sms.'; }
   catch(e){ ta.focus(); ta.select(); try{ document.execCommand('copy'); done.textContent='Gekopieerd.'; }catch(_){ done.textContent='Selecteer de tekst en kopieer hem handmatig.'; } }
 });
+document.getElementById('exportWa').addEventListener('click',()=>{ if(!ta.value.trim()){ done.textContent='Er staat niets meer open.'; return; } window.location.href='https://wa.me/?text='+encodeURIComponent(ta.value); });
 const shareBtn=document.getElementById('exportShare');
 if(!navigator.share) shareBtn.hidden=true;
 shareBtn.addEventListener('click',async()=>{ try{ await navigator.share({text:ta.value}); }catch(e){ if(!(e&&e.name==='AbortError')) done.textContent='Delen lukt hier niet; gebruik Kopiëren.'; } });
