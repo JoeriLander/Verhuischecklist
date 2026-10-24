@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verhuischecklist</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Verhuizen">
+<meta name="theme-color" content="#F2F2EE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Figtree:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F2EE;--ink:#25292A;--muted:#6A6F6B;--line:#E1E2DC;--accent:#3D6158;--accent-ink:#fff;color-scheme:light;box-sizing:border-box;
+ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#181A19;--ink:#E8E9E4;--muted:#9DA29D;--line:#323634;--accent:#8DB5A8;--accent-ink:#13201C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#181A19;--ink:#E8E9E4;--muted:#9DA29D;--line:#323634;--accent:#8DB5A8;--accent-ink:#13201C;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:40px 20px 60px}
+h1{font:600 clamp(36px,6vw,52px)/1 "Cormorant Garamond",Georgia,serif;margin:0}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:1px solid var(--ink);padding-bottom:14px;margin-bottom:8px}
+#total{color:var(--muted);font-size:15px;white-space:nowrap}
+.cols{columns:2 340px;column-gap:48px}
+section{break-inside:avoid-column;padding-top:26px}
+h2{font:600 24px/1.2 "Cormorant Garamond",Georgia,serif;margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+h2 span{font:400 13px "Figtree",sans-serif;color:var(--muted)}
+label{display:flex;gap:12px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer;break-inside:avoid}
+input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin:1px 0 0;border:1.5px solid var(--muted);border-radius:5px;cursor:pointer;display:grid;place-content:center}
+input:checked{background:var(--accent);border-color:var(--accent)}
+input:checked::after{content:"";width:5px;height:10px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input:checked+span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+section.wide{column-span:all;border-top:1px solid var(--ink);margin-top:30px}
+section.wide .inner{columns:2 340px;column-gap:48px}
+@media (max-width:640px){section.wide .inner{columns:1}}
+h3{font-size:13px;font-weight:500;color:var(--muted);margin:18px 0 2px;break-after:avoid}
+label small{display:block;font-size:13px;color:var(--muted);text-decoration:none}
+details>summary{list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+summary h2::before{content:"";flex:none;width:8px;height:8px;border:solid var(--muted);border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);margin-right:4px;align-self:center;transition:transform .15s}
+details[open]>summary h2::before{transform:rotate(45deg)}
+summary h2 b{font-weight:600;flex:1}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+label.hide{border:0;padding:0;font-size:14px;color:var(--muted);gap:8px;align-items:center}
+label.hide input{width:18px;height:18px;margin:0}
+label.hide input:checked+span{text-decoration:none;color:var(--ink)}
+body.hidedone .items label:has(input:checked){display:none}
+.ok{color:var(--accent)}
+.sync{display:flex;gap:12px;align-items:center;margin:12px 0 0;font-size:13px;color:var(--muted)}
+.sync button{flex:none;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 14px;font:500 14px "Figtree",system-ui,sans-serif;cursor:pointer}
+@media print{.sync{display:none}}
+@media (max-width:640px){
+  body{font-size:17px}
+  main{padding:0 16px 48px}
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 12px;margin:0 -16px 0;padding-left:16px;padding-right:16px;align-items:center}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:6}
+  h1{font-size:30px}
+  .top{flex-wrap:wrap;gap:8px}
+  .side{flex-direction:row;width:100%;justify-content:space-between;align-items:center}
+  #total{font-size:14px}
+  label.hide span{white-space:nowrap}
+  section{padding-top:0;border-bottom:1px solid var(--line)}
+  section.wide{margin-top:0;border-top:0}
+  summary{padding:16px 0}
+  h2{margin:0;font-size:23px}
+  .items{padding-bottom:12px}
+  .items label{padding:12px 0;min-height:48px;align-items:center}
+  .items label:has(small){align-items:flex-start}
+  .items input{width:26px;height:26px;border-radius:7px}
+  .items input:checked::after{width:6px;height:12px}
+}
+.msg{font-size:13px;color:var(--muted);margin:10px 0 0}
+.msg:empty{display:none}
+@media print{:root{--bg:#fff;--ink:#000;--muted:#555;--line:#ccc;padding:0}main{padding:0}body{font-size:10pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}input{width:12px;height:12px;border-radius:2px}label{padding:3px 0}.msg{display:none}label.hide{display:none}summary h2::before{display:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>Verhuischecklist</h1><div class="side"><div id="total"></div><label class="hide"><input type="checkbox" id="hide"><span>Verberg afgevinkt</span></label></div></div>
+<div class="sync"><button type="button" id="share">Vinkjes delen</button><span>Stuur je vinkjes naar Marin; zij opent de link en ze worden samengevoegd.</span></div>
+<p class="msg" id="msg">Je vinkjes worden automatisch op dit apparaat bewaard.</p>
+<div class="cols" id="list"></div>
+</main>
+<script type="text/plain" id="data">@woon
+#Zitten en tafelen
+Bank|e|1|a|1|700|Afmetingen deur, trap en lift checken voor levering|woon-zetel
+Salontafel|h|2||1|120
+Eettafel|e|1|w|1|350|Maat afstemmen op de ruimte: reken ±60 cm per persoon
+Eetkamerstoelen|e|1|a|4|240
+Bijzettafeltje|o|3||1|50
+#Opbergen en media
+Boekenkast of open rek|h|2|a|1|120
+Dressoir of buffetkast|o|3||1|300
+Tv-meubel|h|2|a|1|150
+Televisie|h|2|a|1|500|Twee tv's? Kies er één en verkoop de andere
+Tv-muurbeugel|o|3|w|1|40|Bij huur: vraag eerst of je mag boren
+#Verlichting
+Plafondlamp of hanglamp woonkamer|e|1|w|1|80|Vaak hangen er enkel draden
+Staanlamp|h|2|a|1|70
+Tafellamp of leeslamp|o|2|a|1|35
+#Raamdecoratie en textiel
+Gordijnen of overgordijnen woonkamer|e|1|w|2|120|Ramen eerst opmeten (breedte + hoogte)
+Gordijnroede of rails woonkamer|e|1|w|1|50|Soms al aanwezig
+Inkijkwerende vitrage of rolgordijn|h|2|w|1|40|Vooral op het gelijkvloers
+Vloerkleed woonkamer|o|3||1|150
+Plaids|o|3|a|2|40
+Sierkussens|o|3|a|4|40
+#Werkplek
+Bureau|h|2|a|1|150|Werken jullie allebei thuis? Dan misschien twee plekken
+Bureaustoel|h|2|a|1|120
+Bureaulamp|h|2|a|1|30
+#Kleine dingen
+Wandklok|o|3||1|25
+Gieter|h|2||1|10
+@keuken
+#Servies en glazen
+Dinerborden|e|1|a|8|40|Reken op twee per persoon plus gasten
+Ontbijt- of dessertborden|e|1|a|8|30
+Diepe borden|e|1|a|6|25
+Kommen|e|1|a|6|20
+Mokken en kopjes|e|1|a|6|25||keuken-mokken-en-tassen
+Waterglazen|e|1|a|8|20
+Wijnglazen|h|2|a|6|25
+Bestekset (messen, vorken, lepels, theelepels)|e|1|a|1|40|Set voor 6 personen|keuken-bestekset-messen-vorken-lepels-koffielepels
+Slabestek|h|2||1|12
+Opscheplepels|h|2||2|10
+Dienblad|o|3||1|20
+#Pannen en ovenschalen
+Kookpannen (klein, middel, groot)|e|1|a|3|90|Werken ze op de kookplaat? Inductie vraagt geschikte bodems|keuken-kookpotten-klein-middel-groot
+Koekenpannen|e|1|a|2|50
+Deksels|e|1|a|3||Vaak bij de pannen inbegrepen
+Wokpan|o|3||1|35
+Ovenschalen|h|2|a|2|35
+Bakplaat en ovenrooster|h|2|w|1|15|Vaak bij de oven inbegrepen
+Bakvormen (cake, taart)|o|3||2|25
+Ovenwanten|e|1||2|15
+Pannenonderzetters|h|1||3|15
+#Messen en keukengerei
+Koksmes|e|1|a|1|40
+Broodmes|e|1|a|1|20
+Schilmesjes|e|1|a|2|10
+Snijplanken|e|1|a|2|25
+Dunschiller|e|1|a|1|5
+Rasp|h|2|a|1|12
+Vergiet|e|1|a|1|12
+Zeef|h|2||1|8
+Spatels|e|1|a|2|10
+Pollepel|e|1|a|1|8
+Houten lepels|e|1|a|2|8
+Garde|h|2||1|8
+Keukentang|h|2||1|10
+Aardappelstamper|o|3||1|10
+Blikopener|e|1|a|1|8
+Kurkentrekker en flesopener|h|1|a|1|10
+Keukenschaar|h|2||1|10
+Maatbeker|h|2||1|8
+Keukenweegschaal|h|2||1|20
+Mengkommen|h|2||2|20
+Trechter|o|3||1|4
+Messenblok of magneetstrip|o|3||1|25
+Keukenrolhouder|o|3||1|12
+Kruidenrek|o|3||1|20
+Peper- en zoutmolen|h|2||2|20
+#Grote apparaten
+Koelkast|e|1|w|1|450|Staat er al één in de woning? Meet de nis op
+Vriezer of vriesvak|h|2|w|1|350||keuken-diepvriezer-of-diepvriesvak
+Kookplaat of fornuis|e|1|w|1||Meestal aanwezig in de woning
+Oven|h|1|w|1||Meestal ingebouwd
+Afzuigkap|h|1|w|1
+Vaatwasser|h|2|w|1|450|Is er een aansluiting voorzien?
+Magnetron|h|2|a|1|90||keuken-microgolfoven
+#Kleine apparaten
+Waterkoker|e|1|a|1|30
+Koffiezetapparaat|e|1|a|1|80|Spreek af welk systeem jullie houden (pads, capsules, bonen)
+Broodrooster|h|1|a|1|30
+Staafmixer|h|2|a|1|35
+Blender|o|3||1|60
+Airfryer of friteuse|o|3|a|1|90
+Tosti-ijzer|o|3||1|35||keuken-tosti-ijzer-croque-monsieur
+#Afwas en afval
+Afwasborstel|e|1||2|5
+Vaatdoekjes|e|1|a|6|15||keuken-schotelvodden-en-vaatdoeken
+Theedoeken en handdoeken voor de keuken|e|1|a|6|20||keuken-keukenhanddoeken
+Afdruiprek|e|1|w|1|20
+Afwasteil|o|2||1|8
+Afvalbak keuken|e|1||1|40||keuken-vuilnisbak-keuken
+Afvalscheidingsbakken (plastic/PMD, papier, glas, gft)|e|1|w|3|40|Afhankelijk van de afvalregels van jullie gemeente|keuken-sorteerbakken-pmd-papier-glas-gft
+#Bewaren en tafelen
+Vershoudbakjes|h|1|a|10|30||keuken-bewaardozen
+Voorraadpotten|o|3||6|30
+Broodtrommel|h|2||1|20
+Placemats|o|3||4|20
+Tafelkleed|o|3||1|25
+@slaap
+#Bed en matras
+Bed of bedframe|e|1|a|1|350|Past het door trap en deuren?
+Lattenbodem|e|1|a|1|120
+Matras|e|1|a|1|500|Samen gaan testen; een tweepersoonsmatras is vaak 160 of 180 cm breed
+Matrasbeschermers|e|1||2|40|Eén reserve voor als de andere in de was zit
+Dekbed|e|1|a|1|100
+Hoofdkussens|e|1|a|4|60
+#Bedlinnen
+Dekbedovertrekken|e|1|a|3|120|Minstens twee sets in de juiste maat
+Hoeslakens|e|1|a|3|60|Maat afstemmen op de nieuwe matras
+Kussenslopen|e|1|a|6||Vaak bij het dekbedovertrek
+Extra deken|o|3||1|40
+#Opbergen
+Kleerkast|e|1|w|1|300|Is er een ingebouwde kast?
+Kleerhangers|e|1|a|60|30
+Ladekast|h|2||1|150
+Opbergboxen onder het bed|o|3||2|30
+#Rond het bed
+Nachtkastjes|h|1|a|2|80
+Nachtlampjes|h|1|a|2|50
+Plafondlamp slaapkamer|e|1|w|1|50
+Wekker|h|1|a|1|15
+#Raam en sfeer
+Verduisterende gordijnen of rolgordijn|e|1|w|1|80|Ramen opmeten
+Gordijnroede slaapkamer|e|1|w|1|40
+Passpiegel|h|2|a|1|60
+Wasmand slaapkamer|h|1||1|25
+Vloerkleed slaapkamer|o|3||1|80
+@bad
+#Textiel
+Badhanddoeken|e|1|a|6|60
+Handdoeken voor de wastafel|e|1|a|4|25||bad-handdoeken-voor-de-lavabo
+Washandjes|h|1|a|6|12
+Badmat|e|1|a|1|20
+Badjassen|o|3|a|2|60
+#Douche en bad
+Douchetrekker|h|1||1|10||bad-douchewisser
+Douchegordijn en stang|h|1|w|1|30|Enkel nodig zonder glazen douchewand
+Douchemandje of zeepbakje|h|2||1|20
+Antislipmat|o|2|w|1|15
+#Wastafel
+Badkamerspiegel|e|1|w|1|50|Vaak al aanwezig
+Tandenborstelhouder|h|1||1|10
+Zeepdispenser|h|1||1|10
+Opbergrek of kastje badkamer|h|2|w|1|40
+Afvalbakje badkamer|h|1||1|15||bad-vuilnisbakje-badkamer
+Tandenborstels|e|1|a|2
+Föhn|h|1|a|1|30||bad-haardroger
+Personenweegschaal|o|3|a|1|25
+#Wc
+Wc-borstels|e|1||2|20|Eén per wc|bad-toiletborstels
+Wc-rolhouder|e|1|w|1|15||bad-toiletrolhouder
+Houder voor reserverollen|o|3||1|15
+Afvalbakje wc|h|1||1|10||bad-vuilnisbakje-toilet
+Ontstopper|e|1||1|10
+@was
+#Wassen en drogen
+Wasmachine|e|2|a w|1|450|Aansluiting en afvoer nakijken
+Wasdroger|o|2|a w|1|500|Is er plaats en een afvoer, of is een condensdroger nodig?|was-droogkast
+Droogrek|e|1|a|1|35
+Wasknijpers|h|1||50|8
+Wasmanden voor vuile was|e|1||2|30
+Wasmand om was te dragen|h|2||1|15
+Waszakjes voor delicate was|o|3||2|8
+Strijkijzer of stoomstrijker|h|2|a|1|40
+Strijkplank|h|2|a|1|40
+#Schoonmaakmateriaal
+Stofzuiger|e|1|a|1|200|Twee stofzuigers? Houd de beste
+Dweil of vloerwisser|e|1||1|30
+Emmers|e|1||2|10
+Vloertrekker|h|1||1|10
+Stoffer en blik|e|1||1|10
+Bezem|e|1||1|12||was-borstel
+Microvezeldoeken|e|1||10|15
+Raamwisser en zeem|h|2||1|20||was-ruitenwisser-en-zeemvel
+Stofdoek of plumeau|h|2||1|10
+Huishoudhandschoenen|h|1||2|5
+#Schoonmaak- en wasproducten
+Wasmiddel|e|1||1|12
+Wasverzachter|o|2||1|5
+Vlekkenmiddel|h|2||1|5
+Allesreiniger|e|1||1|4
+Badkamerreiniger of ontkalker|e|1||1|4
+Toiletreiniger|e|1||1|3
+Glasreiniger|h|1||1|3
+Ontvetter keuken|h|2||1|4
+Afwasmiddel|e|1||1|3
+Vaatwastabletten|h|1|w|1|10|Alleen met vaatwasser
+Schuursponsjes|e|1||6|3
+Stofzuigerzakken of filters|h|2||1|10|Afhankelijk van het model
+@hal
+#Entree
+Deurmat binnen|e|1||1|20
+Deurmat buiten|h|2||1|25
+Kapstok|e|1|w|1|50
+Schoenenrek of schoenenkast|h|1||1|60
+Sleutelrekje of sleutelschaaltje|h|1||1|15
+Spiegel in de hal|o|3||1|50
+Paraplubak|o|3||1|25
+Lamp hal|e|1|w|1|40
+#Opbergruimte
+Opbergdozen met deksel|h|2||6|40
+Opbergmanden|o|3||4|40
+Stellingkast voor berging of schuur|h|2|w|1|60||hal-stellingrek-voor-berging-of-kelder
+Bezemkast|o|3|w|1|100||hal-kast-voor-stofzuiger-en-schoonmaakspullen
+Fietsenrek of fietsophanging|o|3|w|1|40
+Vacuümzakken voor seizoenskleding|o|3||4|20
+@tech
+#Internet
+Modem en wifi-router|e|1||1||Meestal van de provider
+Wifi-versterker of mesh-systeem|o|3|w|1|100|Pas na een paar dagen testen beslissen
+Netwerkkabels|o|2||2|10
+#Stroom en licht
+Stekkerdozen|e|1|a|5|50
+Verlengsnoeren|e|1|a|3|30||tech-verlengkabels
+Kabelhaspel|o|3||1|30
+Ledlampen in verschillende fittingen|e|1||10|40|Fittingen (E27, E14, GU10) eerst checken
+Kroonsteentjes of lasklemmen|e|1||10|8|Om lampen aan te sluiten|tech-lasklemmen-of-kroonsteentjes
+Batterijen (AA en AAA)|e|1|a|1|15
+#Apparaten
+Opladers en kabels verzamelen|e|1|a|1
+Printer|o|3|a|1||Hebben jullie er allebei één?
+Speaker|o|3|a|1
+@tools
+#Basisgereedschap
+Gereedschapskist|e|1|a|1|30
+Schroevendraaiers (plat en kruis)|e|1|a|1|20
+Bitset en inbussleutels|e|1|a|1|20|Onmisbaar bij meubelmontage
+Hamer|e|1|a|1|15
+Combinatietang|h|1|a|1|15
+Meetlint|e|1|a|1|10
+Waterpas|h|1|a|1|12
+Stanleymes (afbreekmes)|e|1|a|1|8||tools-breekmes-stanleymes
+Scharen|e|1|a|2|10
+Boormachine|h|1|a|1|80|Lenen kan ook
+Boortjes voor hout, steen en metaal|h|1||1|20
+Spanningszoeker|h|1||1|8
+Trap of huishoudtrap|e|1||1|60|Voor lampen en gordijnen|tools-trapladder
+Werkhandschoenen|h|1||2|10
+#Bevestigen en herstellen
+Schroeven en pluggen (assortiment)|e|1||1|15
+Nagels en fotohaakjes|h|2||1|8
+Kabelbinders|h|1||1|5
+Ducttape|e|1||1|8
+Plakband|e|1||2|5
+Superlijm|o|2||1|5
+Plamuur en plamuurmes|h|1|w|1|12|Om boorgaten te dichten bij het opleveren van de oude woning|tools-muurvuller-en-plamuurmes
+Kitpistool en silicone|o|3|w|1|15
+Verf om bij te werken|o|3|w|1|30
+Viltjes voor meubelpoten|h|1||1|8|Beschermt de vloer
+Potloden en stiften|e|1||1|5
+@admin
+#Woning en contract
+Huurcontract of koopakte|e|1|w|1||Digitale kopie bewaren|admin-huurcontract-of-aankoopakte
+Borg|e|1|w|1||Bij huur; bedrag volgens het huurcontract (te controleren)|admin-huurwaarborg
+Opleveringsrapport nieuwe woning|e|1|w|1||Bij huur; foto’s van bestaande schade laten opnemen|admin-plaatsbeschrijving-nieuwe-woning
+Recht op huurtoeslag nagaan|h|2|w|1||Samenwonen telt mee voor het inkomen (te controleren bij de Belastingdienst)
+Opzegging en oplevering oude woning|e|1|w|1||Opzegtermijn in het huidige huurcontract nakijken|admin-opzeg-en-plaatsbeschrijving-oude-woning
+Aantal sleutels noteren|e|1||1
+#Energie en water
+Elektriciteitscontract|e|1||1||Vergelijk leveranciers
+Gascontract|e|1|w|1||Alleen als er aardgas is
+Drinkwater|e|1||1||Aanmelden bij het drinkwaterbedrijf in jullie regio|admin-watercontract
+Meterstanden doorgeven aan de energieleverancier|e|1||1||Bij de overdracht van de sleutel, eventueel samen met de vorige bewoner|admin-energieovernamedocument
+Contracten oude woning opzeggen of meeverhuizen|e|1||1
+#Internet en telecom
+Internet en tv aanvragen of meeverhuizen|e|1||1||Tijdig doen: een installatie kan weken duren
+Mobiele abonnementen herbekijken|o|3||1|||admin-gsm-abonnementen-herbekijken
+#Verzekeringen
+Opstal- en inboedelverzekering|e|1||1||Bij koop vraagt de hypotheekverstrekker meestal een opstalverzekering; bij huur verzekert de verhuurder de opstal en regelen jullie zelf de inboedel (te controleren)|admin-brandverzekering
+Aansprakelijkheidsverzekering (AVP) aanpassen|h|2|a|1||Samenwonen: één gezinspolis is vaak voordeliger|admin-familiale-verzekering-aanpassen
+Inboedelwaarde juist ingeschat|h|2||1|||admin-inboedel-juist-verzekerd
+Autoverzekering: adres en partner doorgeven|h|2|w|1|||admin-autoverzekering-adres-doorgeven
+Zorgverzekeraar: adres controleren|h|2||1||Wordt vaak automatisch bijgewerkt via de gemeente, maar kijk het na|admin-ziekenfonds-en-hospitalisatieverzekering-informe
+#Adres, gemeente en Belastingdienst
+Verhuizing doorgeven aan de gemeente|e|1||1||Kan meestal vanaf 4 weken vooraf en uiterlijk 5 dagen na de verhuizing, via DigiD (te controleren)|admin-adreswijziging-bij-de-gemeente
+Toeslagen en toeslagpartner doorgeven|e|2||1||Via Mijn toeslagen bij de Belastingdienst; samenwonen kan gevolgen hebben (te controleren)
+Gemeentelijke belastingen en waterschapsbelasting|e|2||1||Aanslagen komen op het nieuwe adres; check eventueel kwijtschelding of verrekening
+Post laten doorsturen|h|1||1|30|Via de Verhuisservice van PostNL, betaald
+Bank, werkgever en abonnementen informeren|e|2||1
+Webshops en leveringsadressen aanpassen|h|2||1
+Automatische incasso’s en periodieke overboekingen nakijken|h|2||1|||admin-domicilieringen-en-doorlopende-opdrachten-nakijk
+Huisarts, tandarts en apotheek|h|2||1||Inschrijven bij een huisarts in de buurt kan wachttijd hebben
+Naamplaatje brievenbus en deurbel|e|1||1|10
+Afvalkalender en afvalpas van de gemeente|e|1||1||Afvalregels en containers verschillen per gemeente|admin-afvalkalender-en-afvalzakken-van-de-gemeente
+#Samen afspreken
+Kostenverdeling of gezamenlijke rekening|e|1||1
+Vaste maandelijkse kosten in kaart|e|1||1||Huur of lening, energie, water, internet, verzekeringen
+Wie brengt wat in (inventaris)|o|3||1||Deze checklist met ‘Hebben we al’ is daar een goede basis voor
+Samenlevingscontract of geregistreerd partnerschap|o|3||1||Heeft gevolgen voor o.a. erfrecht, pensioen en belastingen; informeer bij een notaris|admin-feitelijk-of-wettelijk-samenwonen
+#Contacten en documenten
+Contactgegevens verhuurder of VvE|e|1|w|1|||admin-contactgegevens-verhuurder-of-syndicus
+Klantnummers energie, water en internet|e|1||1
+Documentenmap (digitaal en op papier)|e|1||1
+@plan
+#6–8 weken voor de verhuizing
+Verhuisdatum vastleggen|e|1||1
+Opzegtermijn en sleuteldatum op elkaar afstemmen|e|1|w|1
+Budget voor verhuizing en inrichting bepalen|e|1||1||Vul het totaalbudget in bij Instellingen|plan-budget-voor-verhuis-en-inrichting-bepalen
+Inventaris maken: wie heeft wat|e|1||1||Vul ‘Hebben we al’ in deze checklist in
+Dubbele spullen kiezen: houden, verkopen of weggeven|e|1||1||Filter op ‘Allebei in bezit’
+Opruimen: weggooien wat niet mee moet|h|1||1
+Offertes verhuisbedrijf of bestelbus huren|h|1||1|||plan-offertes-verhuisfirma-of-bestelwagen-huren
+Helpers vragen|e|1||1
+Woning en ramen opmeten, meubelplan maken|h|1|w|1
+Grote meubels met lange levertijd bestellen|h|1||1
+Vrij vragen voor de verhuisdag|h|1||1|||plan-verlof-aanvragen-voor-de-verhuisdag
+#4 weken voor de verhuizing
+Verhuisdozen|e|1||40|80|Reken op ±30 tot 50 voor twee personen
+Verhuistape en tapedispenser|e|1||4|20
+Stiften en etiketten|e|1||1|8
+Noppenfolie of krantenpapier|h|1||1|15
+Verhuisdekens en steekwagen|h|1||1|0|Vaak te huur of te leen|plan-verhuisdekens-en-steekkar
+Energie, water en internet geregeld|e|1||1||Zie Administratie
+Verzekeringen geregeld|e|1||1||Zie Administratie|plan-brandverzekering-afgesloten
+Beginnen met inpakken van wat je zelden gebruikt|e|1||1
+Parkeerplek of ontheffing voor de verhuiswagen regelen|h|1|w|1||Vaak via de gemeente; ook een verhuislift kan een vergunning nodig hebben|plan-parkeerverbod-of-verhuislift-aanvragen
+Opvang voor huisdieren of planten op de verhuisdag|o|1||1
+Sleuteloverdracht afspreken|e|1||1
+#2 weken voor de verhuizing
+Lijst maken van alle adreswijzigingen|e|1||1
+Kamer per kamer inpakken|e|1||1
+Dozen labelen met kamer en inhoud|e|1||1||Kleurcode per kamer werkt goed
+Kleding sorteren|h|1||1
+Vriezer leegeten|h|1||1|||plan-diepvries-leegeten
+Planning verhuisdag delen met helpers|e|1||1
+Nieuwe woning schoonmaken|e|1||1||Als je al toegang hebt
+#Laatste week
+Eerste-nachtdoos inpakken|e|1||1||Lakens, toiletpapier, opladers, waterkoker, mokken, medicatie
+Meubels demonteren|e|1||1||Schroeven in gelabelde zakjes, vastgetapet aan het meubel
+Koelkast en vriezer ontdooien|e|1||1|||plan-koelkast-en-diepvriezer-ontdooien
+Waardevolle spullen en documenten apart houden|e|1||1
+Verhuisbedrijf of bestelbus bevestigen|e|1||1|||plan-verhuisfirma-of-bestelwagen-bevestigen
+Eten en drinken voor helpers|h|1||1|50
+Zelf een tas met kleren voor enkele dagen|h|1||1
+#Verhuisdag
+Meterstanden oude woning noteren en fotograferen|e|1||1||Elektriciteit, gas en water
+Meterstanden nieuwe woning noteren en fotograferen|e|1||1
+Vloeren en deurposten beschermen|h|1||1
+Dozen meteen in de juiste kamer zetten|e|1||1
+Bed monteren en opmaken vóór de avond|e|1||1
+Oude woning laatste controle: kasten, kelder, zolder, ramen|e|1||1
+Sleutels oude woning afgeven|e|1||1
+Helpers bedanken|h|1||1
+#Eerste week
+Keuken, badkamer en slaapkamer uitpakken|e|1||1
+Meubels opnieuw monteren|e|1||1
+Lampen ophangen|e|1||1
+Apparaten testen: verwarming, cv-ketel, wasmachine|e|1||1|||plan-toestellen-testen-verwarming-boiler-wasmachine
+Schade of gebreken melden|e|1|w|1||Laten aanvullen in het opleveringsrapport
+Lege dozen platvouwen en doorgeven|h|1||1
+Kennismaken met de buren|o|1||1
+#Eerste maand
+Alles uitgepakt|h|2||1
+Gordijnen en decoratie ophangen|h|2||1
+Borg oude woning terugvragen|e|2|w|1|||plan-huurwaarborg-oude-woning-terugvragen
+Eindafrekeningen oude woning controleren|e|2||1
+Budget evalueren|h|2||1||Zie het tabblad Overzicht
+Ontbrekende spullen aanvullen|h|2||1
+Housewarming plannen|o|3||1
+@food
+#Ontbijt
+Koffie|e|1||1|8
+Thee|e|1||1|3
+Melk of plantaardige drank|e|1||1|2
+Brood|e|1||1|3
+Beleg|e|1||1|6
+Boter|e|1||1|3
+Ontbijtgranen of muesli|h|1||1|4
+Suiker|h|1||1|2
+#Voorraadkast
+Pasta|e|1||2|3
+Rijst|e|1||1|3
+Tomatensaus of passata|e|1||2|3
+Blikken (bonen, tomaten, tonijn)|h|1||4|6||food-conserven-bonen-tomaten-tonijn
+Bouillonblokjes|h|2||1|2
+Bloem|o|2||1|1
+Olijfolie|e|1||1|8
+Bakboter of bakolie|e|1||1|3
+Azijn|h|2||1|2
+Zout en peper|e|1||1|4
+Basiskruiden|h|2||1|10|Bijvoorbeeld oregano, paprika, kerrie
+Mosterd, mayonaise en ketchup|h|1||1|6
+Snacks|o|1||1|8
+Water en frisdrank|e|1||1|10|Ook voor de helpers
+#Vers en diepvries
+Groenten en fruit|e|1||1|15
+Eieren|h|1||1|3
+Kaas|h|1||1|5
+Diepvriesgroenten|h|1||2|5
+Snelle maaltijd voor de eerste avond|e|1||1|15|Of afhaal plannen
+#Papier, folie en afval
+Toiletpapier|e|1||1|8
+Keukenrol|e|1||1|4
+Vuilniszakken|e|1|w|1|10||food-vuilniszakken-of-gemeentelijke-restafvalzakken
+Zakken voor plastic of PMD|e|1|w|1|3|Alleen als jullie gemeente plastic apart inzamelt|food-pmd-zakken
+Vershoudfolie en aluminiumfolie|h|2||1|5
+Diepvrieszakjes|h|2||1|3
+Bakpapier|o|2||1|2
+Servetten|o|2||1|3
+Lucifers of aansteker|h|1||1|2
+Kaarsen|o|3||1|5
+#Verzorging
+Handzeep|e|1||2|4
+Douchegel en shampoo|e|1|a|1|8
+Tandpasta|e|1|a|1|3
+Deodorant|e|1|a|1|4
+Zakdoeken|h|1||1|2
+Wattenstaafjes en watjes|o|2|a|1|3
+@veilig
+#Brand
+Rookmelders|e|1|w|3|60|In Nederland sinds 1 juli 2022 verplicht op elke verdieping met een verblijfsruimte (te controleren)
+CO-melder|h|1|w|1|35|Aanbevolen bij gas, een verwarmingsketel of houtkachel
+Brandblusser|h|2||1|40
+Blusdeken|h|2||1|25|In de keuken ophangen
+Vluchtweg afspreken|h|2||1
+#EHBO
+EHBO-kit|e|1|a|1|25|Pleisters, ontsmetting, verband, schaartje
+Basismedicatie en koortsthermometer|e|1|a|1|20
+#Noodpakket
+Zaklamp|e|1|a|1|15
+Powerbank|h|2|a|1|25
+Noodnummers op papier|e|1||1||112, huisarts, verhuurder, buren, familie
+Hoofdkraan water, gaskraan en meterkast lokaliseren|e|1|w|1|||veilig-hoofdkraan-water-gaskraan-en-zekeringkast-lokali
+Groepen in de meterkast labelen|h|2|w|1|||veilig-zekeringkast-labelen
+Reservesleutel bij een vertrouwenspersoon|h|2||1|5
+#Inbraakpreventie
+Sloten vervangen|h|2|w|1|100|Vooral bij een aankoop
+Raamsloten of alarmsysteem|o|3|w|1||Let op het Politiekeurmerk Veilig Wonen
+Tijdschakelaar voor lampen|o|3||1|15|Handig als jullie op reis gaan
+@later
+#Sfeer en decoratie
+Kunst en posters|o|3||1|100
+Fotolijsten|o|3||4|40
+Kamerplanten|o|3||4|60
+Plantenpotten|o|3||4|40
+Vazen en kaarsenhouders|o|3||1|40
+Wandplanken|o|3|w|2|40
+#Slim en comfortabel wonen
+Slimme verlichting|o|3||1|80
+Slimme thermostaat|o|3|w|1|150|Bij huur: eerst overleggen
+Robotstofzuiger|o|3||1|250
+Ventilator|o|3||1|40
+#Extra meubels
+Slaapbank of logeermatras|o|3||1|150
+Extra stoelen of krukjes|o|3||2|60
+Tuinset of balkonset|o|3|w|1|200||later-tuin-of-balkonmeubels
+Barbecue|o|3|w|1|150
+#Extra in de keuken
+Keukenmachine|o|3||1|200||later-keukenrobot
+Espressomachine|o|3||1|300
+Fondue- of gourmetstel|o|3|a|1|50
+Servies voor gasten|o|3||1|60
+Wijnrek|o|3||1|30
+#Buiten
+Tuingereedschap|o|3|w|1|60
+Tuinslang|o|3|w|1|30
+Grasmaaier|o|3|w|1|200
+@gastouder
+#Registratie en GGD-inspectie (wettelijk)
+Verhuizing vooraf melden bij het gastouderbureau|e|1||1||Een nieuw opvangadres is altijd een nieuwe aanvraag voor registratie in het LRK
+Aanvraag registratie nieuw opvangadres ingediend|e|1||1||Loopt via gastouderbureau en gemeente; reken op enkele weken behandeltijd
+GGD-inspectie op het nieuwe adres gepland|e|1||1||Pas opvangen op het nieuwe adres na toestemming en registratie in het LRK
+Partner ingeschreven in het Personenregister Kinderopvang (PRK)|e|1||1||Verplicht voor alle volwassenen die op de opvanglocatie wonen; daarna koppelen aan het gastouderbureau
+Andere volwassenen die vaak over de vloer komen in het PRK|h|1||1||Bijvoorbeeld inwonende of regelmatig aanwezige volwassenen; check bij het gastouderbureau
+Nieuwe RI&E voor de nieuwe woning|e|1||1||Een kopie moet op de opvanglocatie aanwezig zijn
+Veiligheids- en gezondheidsbeleid en huisregels aangepast aan de nieuwe woning|e|1||1||
+Pedagogisch werkplan bijgewerkt|h|1||1||
+Achterwacht geregeld die binnen 15 minuten op het nieuwe adres kan zijn|e|1||1||
+Kinder-EHBO-certificaat nog geldig|e|1||1||Vervaldatum checken
+Ouders geïnformeerd over nieuw adres en startdatum|e|1||1||
+#Inrichtingseisen (wettelijk)
+Aparte slaapruimte voor kinderen jonger dan 1,5 jaar|e|1||1||
+Voldoende speelruimte binnen|e|1||1||
+Voldoende speelruimte buiten|e|1||1||Eigen tuin of een veilige speelplek in de buurt; check wat het gastouderbureau accepteert
+Woning volledig rookvrij|e|1||1||
+Rookmelders getest en in orde|e|1||1||Eis uit het Besluit bouwwerken leefomgeving
+#Veiligheid (vaak gecontroleerd; check de RI&E)
+Traphekjes boven en onder aan de trap|e|1||1||
+Stopcontactbeveiligers|e|1||1||
+Vingerklembeveiliging voor deuren|e|1||1||
+Kast- en ladesloten|e|1||1||
+Schoonmaakmiddelen en medicijnen hoog of afgesloten opgeborgen|e|1||1||
+Kasten en tv vastgezet tegen omvallen|e|1||1||
+Raamuitzetbegrenzers of raamsloten boven|e|1||1||
+Koordjes van gordijnen en rolgordijnen buiten bereik|e|1||1||
+Hoekbeschermers op scherpe randen|h|1||1||
+Kookplaatbeschermer of fornuisrek|h|1||1||
+Tuin afgesloten met hek en poort|e|1||1||
+Water in de tuin afgeschermd|e|1||1||Vijver, regenton of zwembadje
+Giftige planten weggehaald|h|1||1||
+CO-melder|h|1||1||Zeker bij een gastoestel of open verbranding
+Brandblusser en blusdeken|h|1||1||
+Vluchtplan op papier|h|1||1||
+Noodnummers en gegevens van ouders bij de telefoon|e|1||1||
+Kinder-EHBO-doos|e|1||1||
+CO2-meter voor ventilatie|h|1||1||Wordt vaak gevraagd; check bij het gastouderbureau
+Koorts- en kamerthermometer|h|1||1||
+#Slapen
+Ledikantjes met keurmerk|e|1||1||
+Passende matrasjes|e|1||1||
+Hoeslakens voor ledikantjes|e|1||1||
+Babyslaapzakken|e|1||1||
+Verduistering in de slaapruimte|h|1||1||
+Babyfoon|e|1||1||
+#Verzorgen en eten
+Aankleedkussen of commode|e|1||1||
+Afvalbak met deksel voor luiers|e|1||1||
+Kinderstoelen|e|1||1||
+Kinderservies, bekers en lepeltjes|e|1||1||
+Slabbetjes|h|1||1||
+Flessenwarmer|h|1||1||
+Koelkastthermometer|h|1||1||Voor flesvoeding en meegegeven eten
+Opstapje en wc-verkleiner|h|1||1||
+Handdoekjes of papieren handdoekjes voor de kinderen|e|1||1||
+Handzeep en desinfectiemiddel|e|1||1||
+#Spelen en erop uit
+Box en boxkleed|e|1||1||
+Speelkleed|h|1||1||
+Speelgoed passend bij de leeftijden|e|1||1||
+Boekjes|e|1||1||
+Knutselspullen|h|1||1||
+Opbergbakken voor speelgoed|h|1||1||
+Buitenspeelgoed|h|1||1||
+Kinderwagen, duowagen of bolderkar|h|1||1||
+Autostoeltjes per kind|h|1||1||Alleen als Marin kinderen vervoert
+#Administratie
+Map met protocollen (veiligheid, meldcode, pedagogisch beleid)|e|1||1||
+Contracten en contactgegevens van ouders|e|1||1||
+Presentielijst of urenregistratie|e|1||1||
+Ongevallen- en incidentenregistratie|h|1||1||
+Huurcontract of VvE: opvang aan huis toegestaan|e|1||1||Even navragen bij verhuurder of VvE
+Verzekeraar gemeld dat er aan huis kinderopvang is|e|1||1||Aansprakelijkheid en inboedel
+Adres gewijzigd bij KvK|h|1||1||Alleen als Marin ingeschreven staat bij de KvK
+</script>
+<script>
+(function(){
+const CATS={woon:'Woonkamer',keuken:'Keuken',slaap:'Slaapkamer',bad:'Badkamer en wc',was:'Wasruimte en schoonmaak',hal:'Hal en berging',tech:'Elektronica en techniek',tools:'Gereedschap en klein materiaal',admin:'Administratie en contracten',plan:'Verhuisplanning',food:'Eerste boodschappen',veilig:'Veiligheid en noodpakket',later:'Later en optioneel',gastouder:'Gastouderopvang van Marin'};
+const items=[]; const seen=new Set(); let cat='', sub='';
+for(const raw of document.getElementById('data').textContent.split('\n')){
+  const l=raw.trim(); if(!l) continue; if(l[0]==='#'){sub=l.slice(1);continue} if(l[0]==='@'){cat=l.slice(1);continue}
+  const p=l.split('|'); const s=p[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48);
+  let id=cat+'-'+s,k=2; while(seen.has(id)) id=cat+'-'+s+'-'+(k++); if(p[7]) id=p[7]; seen.add(id);
+  items.push({id,cat,sub,name:p[0],note:p[6]||''});
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let checked={}; const db=null;
+const KEY='verhuis-simpel-v1';
+try{checked=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const list=document.getElementById('list');
+const OKEY='verhuis-simpel-open'; let openState={}; try{openState=JSON.parse(localStorage.getItem(OKEY)||'{}')}catch(e){}
+const phone=window.matchMedia('(max-width:640px)').matches;
+list.innerHTML=Object.keys(CATS).map(c=>`<section data-c="${c}"${c==='gastouder'?' class="wide"':''}><details data-c="${c}"${(openState[c]??!phone)?' open':''}><summary><h2><b>${CATS[c]}</b><span></span></h2></summary><div class="items${c==='gastouder'?' inner':''}">`+
+  items.filter(i=>i.cat===c).map((i,n,a)=>(c==='gastouder'&&(n===0||a[n-1].sub!==i.sub)?`<h3>${esc(i.sub)}</h3>`:'')+`<label><input type="checkbox" data-id="${i.id}"><span>${esc(i.name)}${c==='gastouder'&&i.note?`<small>${esc(i.note)}</small>`:''}</span></label>`).join('')+'</div></details></section>').join('');
+list.addEventListener('toggle',e=>{const d=e.target; if(d.tagName!=='DETAILS') return; openState[d.dataset.c]=d.open; try{localStorage.setItem(OKEY,JSON.stringify(openState))}catch(_){} },true);
+window.addEventListener('beforeprint',()=>list.querySelectorAll('details').forEach(d=>d.open=true));
+const hideEl=document.getElementById('hide'); try{hideEl.checked=localStorage.getItem('verhuis-simpel-hide')==='1'}catch(e){} document.body.classList.toggle('hidedone',hideEl.checked);
+hideEl.addEventListener('change',()=>{document.body.classList.toggle('hidedone',hideEl.checked); try{localStorage.setItem('verhuis-simpel-hide',hideEl.checked?'1':'0')}catch(e){}});
+function paint(){
+  list.querySelectorAll('input').forEach(el=>{el.checked=!!checked[el.dataset.id]});
+  count();
+}
+function count(){
+  let n=0; for(const i of items) if(checked[i.id]) n++;
+  document.getElementById('total').textContent=`${n} van ${items.length} afgevinkt`;
+  list.querySelectorAll('section').forEach(s=>{const its=items.filter(i=>i.cat===s.dataset.c); s.querySelector('h2 span').textContent=`${its.filter(i=>checked[i.id]).length}/${its.length}`;});
+}
+const busy=new Set(),pend=new Set();
+async function save(id){
+  if(!db){ try{localStorage.setItem(KEY,JSON.stringify(checked))}catch(e){} return; }
+  pend.add(id); if(busy.has(id)) return; busy.add(id);
+  while(pend.has(id)){ pend.delete(id);
+    try{ const ref=db.doc('checks/'+id); checked[id]? await ref.set({v:true}) : await ref.delete(); }
+    catch(e){ document.getElementById('msg').textContent = e&&e.code==='invalid_argument' ? 'Je kan deze lijst bekijken, maar niet afvinken. Vraag om de rol Bijdrager of Bewerker.' : 'Opslaan lukte niet. Controleer je verbinding.'; }
+  }
+  busy.delete(id);
+}
+list.addEventListener('change',e=>{const id=e.target.dataset.id; if(!id) return; if(e.target.checked) checked[id]=true; else delete checked[id]; count(); save(id);});
+paint();
+// ---- vinkjes delen via link (geen server nodig) ----
+const VER='v1';
+function encode(){ const bytes=new Uint8Array(Math.ceil(items.length/8)); items.forEach((it,n)=>{ if(checked[it.id]) bytes[n>>3]|=1<<(n&7); });
+  let s=''; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function decode(str){ try{ const s=atob(str.replace(/-/g,'+').replace(/_/g,'/')); const out=[]; items.forEach((it,n)=>{ const b=s.charCodeAt(n>>3)||0; if(b&(1<<(n&7))) out.push(it.id); }); return out; }catch(e){ return null; } }
+function persistAll(){ try{localStorage.setItem(KEY,JSON.stringify(checked))}catch(e){} }
+const m=location.hash.match(/^#(v1)\.([A-Za-z0-9_-]+)$/);
+if(m){ const ids=decode(m[2]); history.replaceState(null,'',location.pathname+location.search);
+  if(ids){ const nieuw=ids.filter(id=>!checked[id]).length;
+    if(nieuw===0) msg('Deze link bevat geen nieuwe vinkjes.');
+    else if(confirm(`Deze link bevat ${nieuw} vinkje(s) die jij nog niet hebt. Samenvoegen met jouw lijst?`)){ ids.forEach(id=>checked[id]=true); persistAll(); paint(); msg(`${nieuw} vinkje(s) samengevoegd.`); } } }
+function msg(s){ const el=document.getElementById('msg'); el.textContent=s; el.classList.add('ok'); }
+document.getElementById('share').addEventListener('click',async()=>{
+  const url=location.origin+location.pathname+'#'+VER+'.'+encode();
+  try{ if(navigator.share){ await navigator.share({title:'Onze verhuischecklist',text:'Mijn vinkjes voor de verhuischecklist:',url}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  try{ await navigator.clipboard.writeText(url); msg('Link gekopieerd. Stuur hem naar Marin.'); }catch(e){ prompt('Kopieer deze link:',url); }
+});
+})();
+</script>
+</body>
+</html>
