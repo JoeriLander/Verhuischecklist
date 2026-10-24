@@ -52,6 +52,21 @@ label.hide input{width:18px;height:18px;margin:0}
 label.hide input:checked+span{text-decoration:none;color:var(--ink)}
 body.hidedone .items label:has(input:checked){display:none}
 .ok{color:var(--accent)}
+.sync .ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .card{background:var(--bg);width:100%;max-width:640px;max-height:92vh;display:flex;flex-direction:column;gap:12px;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));border-radius:16px 16px 0 0}
+@media (min-width:700px){.sheet{align-items:center}.sheet .card{border-radius:16px}}
+.sheet h2{margin:0}
+.sheet textarea{flex:1;min-height:40vh;width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--bg);color:var(--ink);font:14px/1.5 "Figtree",system-ui,sans-serif;resize:none}
+.sheet .opt{border:0;padding:0;font-size:14px;color:var(--muted);align-items:center}
+.sheet .opt input{width:20px;height:20px;margin:0}
+.sheet .opt input:checked+span{text-decoration:none;color:var(--ink)}
+.sheet .row{display:flex;gap:8px;flex-wrap:wrap}
+.sheet .row button{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 16px;font:500 15px "Figtree",system-ui,sans-serif;cursor:pointer}
+.sheet .row .ghost{background:transparent;color:var(--ink);border-color:var(--line);margin-left:auto}
+.sheet .done{font-size:13px;color:var(--accent);min-height:1em}
+@media print{.sheet{display:none!important}}
 .sync{display:flex;gap:12px;align-items:center;margin:12px 0 0;font-size:13px;color:var(--muted)}
 .sync button{flex:none;border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 14px;font:500 14px "Figtree",system-ui,sans-serif;cursor:pointer}
 @media print{.sync{display:none}}
@@ -83,10 +98,17 @@ body.hidedone .items label:has(input:checked){display:none}
 <body>
 <main>
 <div class="top"><h1>Verhuischecklist</h1><div class="side"><div id="total"></div><label class="hide"><input type="checkbox" id="hide"><span>Verberg afgevinkt</span></label></div></div>
-<div class="sync"><button type="button" id="share">Vinkjes delen</button><span>Stuur je vinkjes naar Marin; zij opent de link en ze worden samengevoegd.</span></div>
+<div class="sync"><button type="button" id="share">Vinkjes delen</button><button type="button" class="ghost" id="export">Wat we nog zoeken</button></div>
 <p class="msg" id="msg">Je vinkjes worden automatisch op dit apparaat bewaard.</p>
 <div class="cols" id="list"></div>
 </main>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t"><div class="card">
+<h2 id="sheet-t">Wat we nog zoeken</h2>
+<label class="opt"><input type="checkbox" id="onlyStuff" checked><span>Alleen spullen (zonder boodschappen en taken)</span></label>
+<textarea id="exportText" aria-label="Tekst om te versturen"></textarea>
+<div class="done" id="exportDone"></div>
+<div class="row"><button type="button" id="exportShare">Delen</button><button type="button" id="exportCopy">Kopiëren</button><button type="button" class="ghost" id="exportClose">Sluiten</button></div>
+</div></div>
 <script type="text/plain" id="data">@woon
 #Zitten en tafelen
 Bank|e|1|a|1|700|Afmetingen deur, trap en lift checken voor levering|woon-zetel
@@ -677,6 +699,38 @@ async function save(id){
 }
 list.addEventListener('change',e=>{const id=e.target.dataset.id; if(!id) return; if(e.target.checked) checked[id]=true; else delete checked[id]; count(); save(id);});
 paint();
+
+// ---- openstaande items exporteren als tekst ----
+const TASK=/weggehaald|op papier|bij de telefoon|opgeborgen|vastgezet|buiten bereik|afgeschermd|afgesloten met|lokaliseren|labelen|afspreken|verzamelen|getest/i;
+const SKIPCAT=new Set(['admin','plan','food']);
+const SKIPSUB=/^(Registratie|Inrichtingseisen|Administratie)/;
+function exportText(onlyStuff){
+  const lines=[];
+  let n=0;
+  for(const c of Object.keys(CATS)){
+    if(onlyStuff && SKIPCAT.has(c)) continue;
+    const open=items.filter(i=>i.cat===c && !checked[i.id] && !(onlyStuff && (TASK.test(i.name) || (c==='gastouder' && SKIPSUB.test(i.sub)))));
+    if(!open.length) continue;
+    lines.push(c==='gastouder'?'Voor de gastouderopvang van Marin':CATS[c]);
+    open.forEach(i=>lines.push('- '+i.name)); lines.push(''); n+=open.length;
+  }
+  if(!n) return '';
+  return lines.join('\n').trim();
+}
+const sheet=document.getElementById('sheet'), ta=document.getElementById('exportText'), only=document.getElementById('onlyStuff'), done=document.getElementById('exportDone');
+function fillExport(){ ta.value=exportText(only.checked); done.textContent=''; }
+document.getElementById('export').addEventListener('click',()=>{ fillExport(); sheet.classList.add('on'); document.getElementById('exportCopy').focus(); });
+only.addEventListener('change',fillExport);
+document.getElementById('exportClose').addEventListener('click',()=>sheet.classList.remove('on'));
+sheet.addEventListener('click',e=>{ if(e.target===sheet) sheet.classList.remove('on'); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') sheet.classList.remove('on'); });
+document.getElementById('exportCopy').addEventListener('click',async()=>{
+  try{ await navigator.clipboard.writeText(ta.value); done.textContent='Gekopieerd. Plak de tekst in WhatsApp, een mail of een sms.'; }
+  catch(e){ ta.focus(); ta.select(); try{ document.execCommand('copy'); done.textContent='Gekopieerd.'; }catch(_){ done.textContent='Selecteer de tekst en kopieer hem handmatig.'; } }
+});
+const shareBtn=document.getElementById('exportShare');
+if(!navigator.share) shareBtn.hidden=true;
+shareBtn.addEventListener('click',async()=>{ try{ await navigator.share({text:ta.value}); }catch(e){ if(!(e&&e.name==='AbortError')) done.textContent='Delen lukt hier niet; gebruik Kopiëren.'; } });
 // ---- vinkjes delen via link (geen server nodig) ----
 const VER='v1';
 function encode(){ const bytes=new Uint8Array(Math.ceil(items.length/8)); items.forEach((it,n)=>{ if(checked[it.id]) bytes[n>>3]|=1<<(n&7); });
